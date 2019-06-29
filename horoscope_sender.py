@@ -1,3 +1,6 @@
+#!/usr/local/bin/python3
+import time
+import horoscope_fetcher as hf
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -8,6 +11,10 @@ from selenium.webdriver.support import expected_conditions as EC
 
 DRIVER_LOCATION = '/Users/lalit/Documents/chromedriver'
 URL = 'https://web.whatsapp.com/'
+HOROSCOPE_DICT = {
+    'user1': 'h_name1',
+    'user2': 'h_name2',
+}
 
 
 def get_driver():
@@ -35,10 +42,18 @@ def send_message(driver, name, message):
     message_box.click()
     message_box.send_keys(message)
     message_box.send_keys(Keys.ENTER)
+    time.sleep(5)  # time to type message and send
 
 
 if __name__ == '__main__':
     driver = get_driver()
-    name = "'aa'"
-    message = 
-    send_message(driver, name, message)
+    for u_name, h_name in HOROSCOPE_DICT.items():
+        par_url = hf.add_name_in_url(h_name)
+        url = hf.add_date_in_url(par_url)
+        soup = hf.get_soup(url)
+        horoscope = hf.get_horoscope(soup)
+        header = hf.get_header(soup, h_name)
+        message = hf.get_message(header, horoscope)
+        name = "'{}'".format(u_name)
+        send_message(driver, name, message)
+    driver.quit()

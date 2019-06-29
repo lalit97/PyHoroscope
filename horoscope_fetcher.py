@@ -1,18 +1,16 @@
-import requests 
+import requests
 from datetime import date
 from bs4 import BeautifulSoup
-  
+
 
 BASE_URL = 'https://www.bhaskar.com/religion/rashifal/'
 URL_CONST = 'daily-horoscope/'
-HOROSCOPE_1 = 'aquarius'
-HOROSCOPE_2 = 'gemini'
 
 
-def add_name_in_url(horoscope_name):
-    par_url = BASE_URL + horoscope_name + '/'
+def add_name_in_url(h_name):
+    par_url = BASE_URL + h_name + '/'
     par_url = par_url + URL_CONST
-    return par_url  
+    return par_url
 
 
 def add_date_in_url(par_url):
@@ -28,7 +26,7 @@ def get_soup(url):
     return soup
 
 
-def get_horoscope(response):
+def get_horoscope(soup):
     context = {
         'class': 'rashifal-text-data'
     }
@@ -40,9 +38,9 @@ def get_horoscope(response):
     return horoscope
 
 
-def get_header(soup):
+def get_header(soup, h_name):
     context = {
-        'class': 'rashi_heading aquarius_Big'
+        'class': 'rashi_heading {}_Big'.format(h_name)
     }
     div = soup.find('div', attrs=context)
     div_children = div.contents
@@ -51,14 +49,4 @@ def get_header(soup):
 
 
 def get_message(header, horoscope):
-    return '{} \n {}'.format(header, horoscope)
-
-
-if __name__ == '__main__':
-    par_url = add_name_in_url(HOROSCOPE_1)
-    url = add_date_in_url(par_url)
-    soup = get_soup(url)
-    horoscope = get_horoscope(soup)
-    header = get_header(soup)
-    message = get_message(header, horoscope)
-    print(message)
+    return '*{} ->* {}'.format(header, horoscope)
